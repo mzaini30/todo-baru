@@ -1,0 +1,21 @@
+<script>
+    export default {
+        data() {
+            return {
+                data: [],
+                todoBaru: ''
+            };
+        },
+        methods: {
+
+            dapatkanData() {
+                this.data = alasql('select * from todo order by todo');
+            }
+        },
+        mounted() {
+            this.dapatkanData();
+        }
+    }
+</script>
+<h1>TODO</h1>
+<form action=""><label for="">Masukkan TODO baru</label><input type="text"></form>
