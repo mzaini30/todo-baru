@@ -1,55 +1,55 @@
 <!DOCTYPE html>
-  <html lang="id" data-theme="light">
-  
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Future Web</title>
-  </head>
-  
-  <body>
-      <script src="./lib/vue.js"></script>
-      <script src="./lib/vue-router.js"></script>
-      <script src="./lib/alasql.js"></script>
-      <script src="./lib/swal.js"></script>
-      <script src="./lib/db.js"></script>
-      <script>
-      function toast(teks) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener("mouseenter", Swal.stopTimer);
-            toast.addEventListener("mouseleave", Swal.resumeTimer);
-          },
-        });
+<html lang="id" data-theme="light">
 
-        Toast.fire({
-          icon: "success",
-          title: teks,
-        });
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO</title>
+</head>
+
+<body>
+    <script src="./lib/vue.js"></script>
+    <script src="./lib/vue-router.js"></script>
+    <script src="./lib/alasql.js"></script>
+    <script src="./lib/swal.js"></script>
+    <script src="./lib/db.js"></script>
+    <script>
+        function toast(teks) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener("mouseenter", Swal.stopTimer);
+                    toast.addEventListener("mouseleave", Swal.resumeTimer);
+                },
+            });
+
+            Toast.fire({
+                icon: "success",
+                title: teks,
+            });
+        }
     </script>
-      <link rel="stylesheet" href="./lib/pico.css">
+    <link rel="stylesheet" href="./lib/pico.css">
 
-      <style>
+    <style>
         body {
             padding: 20px;
         }
-      </style>
+    </style>
 
-      <script>
+    <script>
         let routes = [];
-      </script>
-  
-      <div id="app">
-          <router-view></router-view>
-      </div>
-  
-      <html-vue><template id="v-9a6daa37">
+    </script>
+
+    <div id="app">
+        <router-view></router-view>
+    </div>
+
+    <html-vue><template id="v-f9d04a70">
     
 
 
@@ -137,7 +137,7 @@
 routes.push({
     path: '/database',
     component: {
-        template: '#v-9a6daa37',
+        template: '#v-f9d04a70',
         
         data() {
             return {
@@ -164,13 +164,24 @@ routes.push({
     
     }
 });
-</script><template id="v-47ca4a0d">
+</script><template id="v-7f6e918f">
 <h1>TODO</h1>
-<form action=""><label for="">Masukkan TODO baru</label><input type="text"></form></template><script>
+<form action="" @submit.prevent="baru"><label for="">Masukkan TODO baru</label><input v-model="todoBaru" type="text">
+</form>
+<p><label v-for="x in data" :key="x.id"><input :checked="x.is_done" @input="event => ubah(x.id, event.target.checked)"
+            type="checkbox" class="cek" name="" id="">{{ x.todo
+        }}</label></p>
+<p><button @click="hapusSemua">Hapus semua</button></p>
+<p><a href="https://kumpulan-apk.github.io/#/">Download aplikasi lainnya</a></p>
+</template><style>
+    .cek {
+        display: inline-block;
+    }
+</style><script>
 routes.push({
     path: '/',
     component: {
-        template: '#v-47ca4a0d',
+        template: '#v-7f6e918f',
         
         data() {
             return {
@@ -182,6 +193,24 @@ routes.push({
 
             dapatkanData() {
                 this.data = alasql('select * from todo order by todo');
+            },
+            baru() {
+                alasql('insert into todo (todo, is_done) values (?, ?)', [this.todoBaru, false]);
+                this.dapatkanData();
+                this.todoBaru = '';
+                toast('TODO berhasil ditambahkan');
+            },
+            ubah(id, isDone) {
+                alasql('update todo set is_done = ? where id = ?', [isDone, id]);
+                toast('TODO berhasil diubah');
+            },
+            async hapusSemua() {
+                let tanya = await Swal.fire('Hapus semua?');
+                if (tanya.isConfirmed) {
+                    alasql('delete from todo');
+                    this.data = [];
+                    toast('Semua data sudah dihapus');
+                }
             }
         },
         mounted() {
@@ -191,20 +220,20 @@ routes.push({
     }
 });
 </script></html-vue>
-  
-      <script>
-  
-  
-          const router = VueRouter.createRouter({
-              history: VueRouter.createWebHashHistory(),
-              routes,
-          });
-  
-          const app = Vue.createApp({});
-          app.use(router);
-          app.mount('#app');
-  
-      </script>
-  </body>
-  
-  </html>
+
+    <script>
+
+
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes,
+        });
+
+        const app = Vue.createApp({});
+        app.use(router);
+        app.mount('#app');
+
+    </script>
+</body>
+
+</html>

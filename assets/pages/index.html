@@ -10,6 +10,24 @@
 
             dapatkanData() {
                 this.data = alasql('select * from todo order by todo');
+            },
+            baru() {
+                alasql('insert into todo (todo, is_done) values (?, ?)', [this.todoBaru, false]);
+                this.dapatkanData();
+                this.todoBaru = '';
+                toast('TODO berhasil ditambahkan');
+            },
+            ubah(id, isDone) {
+                alasql('update todo set is_done = ? where id = ?', [isDone, id]);
+                toast('TODO berhasil diubah');
+            },
+            async hapusSemua() {
+                let tanya = await Swal.fire('Hapus semua?');
+                if (tanya.isConfirmed) {
+                    alasql('delete from todo');
+                    this.data = [];
+                    toast('Semua data sudah dihapus');
+                }
             }
         },
         mounted() {
@@ -18,4 +36,15 @@
     }
 </script>
 <h1>TODO</h1>
-<form action=""><label for="">Masukkan TODO baru</label><input type="text"></form>
+<form action="" @submit.prevent="baru"><label for="">Masukkan TODO baru</label><input v-model="todoBaru" type="text">
+</form>
+<p><label v-for="x in data" :key="x.id"><input :checked="x.is_done" @input="event => ubah(x.id, event.target.checked)"
+            type="checkbox" class="cek" name="" id="">{{ x.todo
+        }}</label></p>
+<p><button @click="hapusSemua">Hapus semua</button></p>
+<p><a href="https://kumpulan-apk.github.io/#/">Download aplikasi lainnya</a></p>
+<style>
+    .cek {
+        display: inline-block;
+    }
+</style>
